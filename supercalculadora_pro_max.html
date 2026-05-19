@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica de Matemáticas y Física</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            max-width: 650px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 26px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            color: #718096;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            color: #3182ce;
+            border-bottom: 3px solid #3182ce;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 18px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .input-box:focus {
+            border-color: #3182ce;
+            outline: none;
+        }
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        @media(max-width: 500px) {
+            .grid-inputs { grid-template-columns: 1fr; }
+        }
+        .sub-panel {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .sub-panel h4 {
+            margin-top: 0;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+        .input-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .input-field input {
+            width: 90px;
+            padding: 6px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .input-field input:focus {
+            border-color: #3182ce;
+            outline: none;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+        input[type="number"] {
+            width: 75px;
+            padding: 10px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+        }
+        input[type="number"]:focus {
+            border-color: #3182ce;
+            outline: none;
+        }
+        button.solve-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        button.solve-btn:hover {
+            background-color: #2b6cb0;
+        }
+        .result-container {
+            margin-top: 25px;
+            display: none;
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 5px;
+        }
+        .step {
+            background-color: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .step strong {
+            color: #2b6cb0;
+        }
+        .step .math-expr {
+            display: block;
+            margin-top: 5px;
+            font-family: 'Cambria', 'Times New Roman', serif;
+            font-size: 17px;
+            font-style: italic;
+            color: #1a202c;
+        }
+        .final-answer {
+            background-color: #f0fff4;
+            border-left: 4px solid #38a169;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #22543d;
+            margin-top: 15px;
+        }
+        .examples {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Supercalculadora pro max</h1>
+    <div class="subtitle">Saput, Alvarado y Victor</div>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'lineal')">Lineal General</button>
+        <button class="tab-btn" onclick="switchTab(event, 'cuadratica')">Cuadrática</button>
+        <button class="tab-btn" onclick="switchTab(event, 'sistema')">Sistema 2x2</button>
+        <button class="tab-btn" onclick="switchTab(event, 'fisica')">Física: Energía</button>
+    </div>
+
+    <!-- Pestaña Ecuación Lineal -->
+    <div id="lineal" class="section active">
+        <h3>Escribe cualquier ecuación lineal:</h3>
+        <input type="text" id="lineal_input" class="input-box" placeholder="Ej: 3x + 5 = 2x - 8">
+        <div class="examples">Permite x en ambos lados. Ej: <code>5x - 3 = 2x + 9</code> o <code>x + 10 = 20 - x</code></div>
+        <button class="solve-btn" onclick="procesarLinealAvanzada()">Resolver Paso a Paso</button>
+        
+        <div id="res_lineal" class="result-container">
+            <div class="result-title">Procedimiento Completo:</div>
+            <div id="pasos_lineal"></div>
+        </div>
+    </div>
+
+    <!-- Pestaña Ecuación Cuadrática -->
+    <div id="cuadratica" class="section">
+        <h3>Ecuación: ax² + bx + c = 0</h3>
+        <div class="input-group">
+            <input type="number" id="quad_a" placeholder="a"> <span>x² +</span>
+            <input type="number" id="quad_b" placeholder="b"> <span>x +</span>
+            <input type="number" id="quad_c" placeholder="c"> <span>= 0</span>
+        </div>
+        <button class="solve-btn" onclick="procesarCuadratica()">Resolver Paso a Paso</button>
+        
+        <div id="res_cuadratica" class="result-container">
+            <div class="result-title">Procedimiento Completo (Fórmula General):</div>
+            <div id="pasos_cuadratica"></div>
+        </div>
+    </div>
+
+    <!-- Pestaña Sistema 2x2 -->
+    <div id="sistema" class="section">
+        <h3>Sistema de Ecuaciones 2x2</h3>
+        <p style="text-align:center; font-weight:bold; color:#4a5568; margin: 5px 0;">Ecuación 1: a₁x + b₁y = c₁</p>
+        <div class="input-group">
+            <input type="number" id="sys_a1" placeholder="a₁"> <span>x +</span>
+            <input type="number" id="sys_b1" placeholder="b₁"> <span>y =</span>
+            <input type="number" id="sys_c1" placeholder="c₁">
+        </div>
+        <p style="text-align:center; font-weight:bold; color:#4a5568; margin: 5px 0;">Ecuación 2: a₂x + b₂y = c₂</p>
+        <div class="input-group">
+            <input type="number" id="sys_a2" placeholder="a₂"> <span>x +</span>
+            <input type="number" id="sys_b2" placeholder="b₂"> <span>y =</span>
+            <input type="number" id="sys_c2" placeholder="c₂">
+        </div>
+        <button class="solve-btn" onclick="procesarSistema()">Resolver Paso a Paso</button>
+        
+        <div id="res_sistema" class="result-container">
+            <div class="result-title">Procedimiento Completo (Regla de Cramer):</div>
+            <div id="pasos_sistema"></div>
+        </div>
+    </div>
+
+    <!-- Pestaña Física: Conservación de Energía -->
+    <div id="fisica" class="section">
+        <h3>Conservación de Energía Mecánica (E₀ = E_f)</h3>
+        <div class="examples" style="margin-bottom: 15px;">Completa los datos conocidos. Pon una <b>x</b> (en minúscula) en el único dato que desees calcular.</div>
+        
+        <div class="grid-inputs">
+            <!-- Lado Inicial -->
+            <div class="sub-panel">
+                <h4>Estado Inicial (E₀)</h4>
+                <div class="input-field"><span>Masa (m) [kg]:</span> <input type="text" id="f_m" value="2"></div>
+                <div class="input-field"><span>Velocidad (v₀) [m/s]:</span> <input type="text" id="f_v0" value="0"></div>
+                <div class="input-field"><span>Altura (h₀) [m]:</span> <input type="text" id="f_h0" value="15"></div>
+                <div class="input-field"><span>Constante K [N/m]:</span> <input type="text" id="f_k0" value="0"></div>
+                <div class="input-field"><span>Compresión (x₀) [m]:</span> <input type="text" id="f_x0" value="0"></div>
+            </div>
+            <!-- Lado Final -->
+            <div class="sub-panel">
+                <h4>Estado Final (E_f)</h4>
+                <div class="input-field"><span>Gravedad (g) [m/s²]:</span> <input type="text" id="f_g" value="9.8"></div>
+                <div class="input-field"><span>Velocidad (v_f) [m/s]:</span> <input type="text" id="f_vf" value="x"></div>
+                <div class="input-field"><span>Altura (h_f) [m]:</span> <input type="text" id="f_hf" value="0"></div>
+                <div class="input-field"><span>Constante K [N/m]:</span> <input type="text" id="f_kf" value="0"></div>
+                <div class="input-field"><span>Compresión (x_f) [m]:</span> <input type="text" id="f_xf" value="0"></div>
+            </div>
+        </div>
+        
+        <button class="solve-btn" onclick="procesarFisicaEnergia()">Calcular Energías y Despejar</button>
+        
+        <div id="res_fisica" class="result-container">
+            <div class="result-title">Cálculo de Energías y Despeje:</div>
+            <div id="pasos_fisica"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sistema de navegación de pestañas
+    function switchTab(event, tabId) {
+        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.result-container').forEach(res => res.style.display = 'none');
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // 1. MOTOR LINEAL AVANZADO
+    function procesarLinealAvanzada() {
+        const input = document.getElementById('lineal_input').value.replace(/\s+/g, '');
+        const contenedorPasos = document.getElementById('pasos_lineal');
+        const contenedorResultado = document.getElementById('res_lineal');
+        contenedorPasos.innerHTML = '';
+
+        if (!input.includes('=')) {
+            contenedorPasos.innerHTML = '<div class="step" style="border-left-color:red;">❌ Error: La ecuación debe contener un signo igual (=).</div>';
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        const partes = input.split('=');
+        const izquierdo = partes[0];
+        const derecho = partes[1];
+
+        if (!izquierdo || !derecho) {
+            contenedorPasos.innerHTML = '<div class="step" style="border-left-color:red;">❌ Error: Ecuación incompleta.</div>';
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        function parsearLado(expresion) {
+            let expresionFormateada = expresion.replace(/-/g, ',-').replace(/\+/g, ',+');
+            if (!expresionFormateada.startsWith(',') && !expresionFormateada.startsWith('+') && !expresionFormateada.startsWith('-')) {
+                expresionFormateada = '+' + expresionFormateada;
+            }
+            const terminos = expresionFormateada.split(',');
+            let sumaX = 0, sumaNum = 0;
+
+            terminos.forEach(t => {
+                if (!t) return;
+                if (t.includes('x')) {
+                    let coefStr = t.replace('x', '');
+                    if (coefStr === '+' || coefStr === '') coefStr = '1';
+                    if (coefStr === '-') coefStr = '-1';
+                    sumaX += parseFloat(coefStr);
+                } else {
+                    sumaNum += parseFloat(t);
+                }
+            });
+            return { x: sumaX, num: sumaNum };
+        }
+
+        const ladoIzq = parsearLado(izquierdo);
+        const ladoDer = parsearLado(derecho);
+
+        let htmlPasos = `<div class="step"><strong>Paso 1: Ecuación original planteada</strong><br>Expresión inicial ingresada:<span class="math-expr">${izquierdo} = ${derecho}</span></div>`;
+
+        const xAgrupadas = ladoIzq.x - ladoDer.x;
+        const numAgrupados = ladoDer.num - ladoIzq.num;
+
+        let descX = `${ladoIzq.x}x ` + (ladoDer.x >= 0 ? `- ${ladoDer.x}x` : `+ ${Math.abs(ladoDer.x)}x`);
+        let descNum = `${ladoDer.num} ` + (ladoIzq.num >= 0 ? `- ${ladoIzq.num}` : `+ ${Math.abs(ladoIzq.num)}`);
+
+        htmlPasos += `<div class="step"><strong>Paso 2: Trasponer términos semejantes</strong><br>Movemos las variables <em>x</em> a la izquierda y las constantes numéricas a la derecha, invirtiendo sus signos:<span class="math-expr">${descX} = ${descNum}</span></div>`;
+        htmlPasos += `<div class="step"><strong>Paso 3: Reducción y simplificación</strong><br>Sumamos aritméticamente los lados de la igualdad:<span class="math-expr">${xAgrupadas}x = ${numAgrupados}</span></div>`;
+
+        if (xAgrupadas === 0) {
+            if (numAgrupados === 0) {
+                htmlPasos += `<div class="final-answer" style="border-left-color: #4a5568; color: #2d3748; background-color: #edf2f7;">♾️ Soluciones Infinitas (Identidad matemática verdadera).</div>`;
+            } else {
+                htmlPasos += `<div class="final-answer" style="border-left-color: red; color: #9b2c2c; background-color: #fff5f5;">❌ Sin Solución (Inconsistencia: 0 no es igual a ${numAgrupados}).</div>`;
+            }
+            contenedorPasos.innerHTML = htmlPasos;
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        const solucionFinal = numAgrupados / xAgrupadas;
+        htmlPasos += `<div class="step"><strong>Paso 4: Despejar x</strong><br>Dividimos el miembro derecho entre el coeficiente numérico de x:<span class="math-expr">x = ${numAgrupados} / ${xAgrupadas}</span></div>`;
+        htmlPasos += `<div class="final-answer">Solución:<br>x = ${solucionFinal.toFixed(4).replace(/\.?0+$/, '')}</div>`;
+
+        contenedorPasos.innerHTML = htmlPasos;
+        contenedorResultado.style.display = 'block';
+    }
+
+    // 2. MOTOR CUADRÁTICO
+    function procesarCuadratica() {
+        const a = parseFloat(document.getElementById('quad_a').value);
+        const b = parseFloat(document.getElementById('quad_b').value);
+        const c = parseFloat(document.getElementById('quad_c').value);
+        const contenedorPasos = document.getElementById('pasos_cuadratica');
+        const contenedorResultado = document.getElementById('res_cuadratica');
+        contenedorPasos.innerHTML = '';
+
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+            contenedorPasos.innerHTML = '<div class="step" style="border-left-color:red;">❌ Por favor, llena todos los coeficientes.</div>';
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+        if (a === 0) {
+            contenedorPasos.innerHTML = '<div class="step" style="border-left-color:orange;">⚠️ "a" no puede ser cero en una ecuación de segundo grado.</div>';
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        let html = `<div class="step"><strong>Paso 1: Identificación</strong><br>Ecuación: ${a}x² + (${b})x + (${c}) = 0<br>Valores extraídos: a = ${a}, b = ${b}, c = ${c}</div>`;
+        const discriminante = (b * b) - (4 * a * c);
+        html += `<div class="step"><strong>Paso 2: Discriminante (Δ)</strong><br>Aplicando Δ = b² - 4ac:<br><span class="math-expr">Δ = (${b})² - 4 · (${a}) · (${c}) = ${discriminante}</span></div>`;
+
+        if (discriminante > 0) {
+            const raiz = Math.sqrt(discriminante);
+            const x1 = (-b + raiz) / (2 * a);
+            const x2 = (-b - raiz) / (2 * a);
+            html += `<div class="step"><strong>Paso 3: Calcular raíces reales</strong><br>Fórmula: x = [-b ± √Δ] / 2a<br>
+            <span class="math-expr">x₁ = (-(${b}) + ${raiz.toFixed(2)}) / (2 · ${a})</span>
+            <span class="math-expr">x₂ = (-(${b}) - ${raiz.toFixed(2)}) / (2 · ${a})</span></div>`;
+            html += `<div class="final-answer">Dos Soluciones Reales:<br>x₁ = ${x1.toFixed(4).replace(/\.?0+$/, '')}<br>x₂ = ${x2.toFixed(4).replace(/\.?0+$/, '')}</div>`;
+        } else if (discriminante === 0) {
+            const x = -b / (2 * a);
+            html += `<div class="step"><strong>Paso 3: Raíz real única</strong><br>El discriminante es 0, reduciendo la fórmula a x = -b / 2a:<br><span class="math-expr">x = -(${b}) / (2 · ${a})</span></div>`;
+            html += `<div class="final-answer">Solución Única Real:<br>x = ${x.toFixed(4).replace(/\.?0+$/, '')}</div>`;
+        } else {
+            const parteReal = -b / (2 * a);
+            const parteImaginaria = Math.sqrt(-discriminante) / (2 * a);
+            html += `<div class="step"><strong>Paso 3: Calcular raíces complejas</strong><br>Como Δ < 0, se generan soluciones imaginarias empleando i = √-1:<br>
+            <span class="math-expr">x = [${-b} ± √(${Math.abs(discriminante)})i] / ${2 * a}</span></div>`;
+            html += `<div class="final-answer">Soluciones Imaginarias:<br>x₁ = ${parteReal.toFixed(4).replace(/\.?0+$/, '')} + ${parteImaginaria.toFixed(4).replace(/\.?0+$/, '')}i<br>x₂ = ${parteReal.toFixed(4).replace(/\.?0+$/, '')} - ${parteImaginaria.toFixed(4).replace(/\.?0+$/, '')}i</div>`;
+        }
+
+        contenedorPasos.innerHTML = html;
+        contenedorResultado.style.display = 'block';
+    }
+
+    // 3. MOTOR SISTEMA 2X2
+    function procesarSistema() {
+        const a1 = parseFloat(document.getElementById('sys_a1').value);
+        const b1 = parseFloat(document.getElementById('sys_b1').value);
+        const c1 = parseFloat(document.getElementById('sys_c1').value);
+        const a2 = parseFloat(document.getElementById('sys_a2').value);
+        const b2 = parseFloat(document.getElementById('sys_b2').value);
+        const c2 = parseFloat(document.getElementById('sys_c2').value);
+        const contenedorPasos = document.getElementById('pasos_sistema');
+        const contenedorResultado = document.getElementById('res_sistema');
+        contenedorPasos.innerHTML = '';
+
+        if ([a1, b1, c1, a2, b2, c2].some(isNaN)) {
+            contenedorPasos.innerHTML = '<div class="step" style="border-left-color:red;">❌ Por favor, llena la matriz completa de datos.</div>';
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        let html = `<div class="step"><strong>Paso 1: Estructuración del Sistema</strong><br>1) ${a1}x + ${b1}y = ${c1}<br>2) ${a2}x + ${b2}y = ${c2}</div>`;
+        const D = (a1 * b2) - (b1 * a2);
+        html += `<div class="step"><strong>Paso 2: Determinante General (Δ)</strong><br><span class="math-expr">Δ = (a₁ · b₂) - (b₁ · a₂) = (${a1} · ${b2}) - (${b1} · ${a2}) = ${D}</span></div>`;
+
+        if (D === 0) {
+            if ((a1 / a2 === c1 / c2) && (b1 / b2 === c1 / c2)) {
+                html += `<div class="final-answer" style="border-left-color:#4a5568; background-color:#edf2f7; color:#2d3748;">Infinitas Soluciones (Sistema compatible indeterminado).</div>`;
+            } else {
+                html += `<div class="final-answer" style="border-left-color:red; background-color:#fff5f5; color:#9b2c2c;">Sin Solución (Sistema incompatible / líneas paralelas).</div>`;
+            }
+            contenedorPasos.innerHTML = html;
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        const Dx = (c1 * b2) - (b1 * c2);
+        const Dy = (a1 * c2) - (c1 * a2);
+        html += `<div class="step"><strong>Paso 3: Determinantes de Incógnitas (Δx , Δy)</strong><br>
+        <span class="math-expr">Δx = (c₁ · b₂) - (b₁ · c₂) = (${c1} · ${b2}) - (${b1} · ${c2}) = ${Dx}</span>
+        <span class="math-expr">Δy = (a₁ · c₂) - (c₁ · a₂) = (${a1} · ${c2}) - (${c1} · ${a2}) = ${Dy}</span></div>`;
+
+        const x = Dx / D;
+        const y = Dy / D;
+        html += `<div class="step"><strong>Paso 4: Solución Divisional</strong><br>
+        <span class="math-expr">x = Δx / Δ = ${Dx} / ${D}</span>
+        <span class="math-expr">y = Δy / Δ = ${Dy} / ${D}</span></div>`;
+        html += `<div class="final-answer">Soluciones del Sistema:<br>x = ${x.toFixed(4).replace(/\.?0+$/, '')}<br>y = ${y.toFixed(4).replace(/\.?0+$/, '')}</div>`;
+
+        contenedorPasos.innerHTML = html;
+        contenedorResultado.style.display = 'block';
+    }
+
+    // 4. MOTOR FÍSICA: CONSERVACIÓN DE ENERGÍA
+    function procesarFisicaEnergia() {
+        const contenedorPasos = document.getElementById('pasos_fisica');
+        const contenedorResultado = document.getElementById('res_fisica');
+        contenedorPasos.innerHTML = '';
+
+        const inputsRaw = {
+            m: document.getElementById('f_m').value.trim().toLowerCase(),
+            g: document.getElementById('f_g').value.trim().toLowerCase(),
+            v0: document.getElementById('f_v0').value.trim().toLowerCase(),
+            h0: document.getElementById('f_h0').value.trim().toLowerCase(),
+            k0: document.getElementById('f_k0').value.trim().toLowerCase(),
+            x0: document.getElementById('f_x0').value.trim().toLowerCase(),
+            vf: document.getElementById('f_vf').value.trim().toLowerCase(),
+            hf: document.getElementById('f_hf').value.trim().toLowerCase(),
+            kf: document.getElementById('f_kf').value.trim().toLowerCase(),
+            xf: document.getElementById('f_xf').value.trim().toLowerCase()
+        };
+
+        let incognita = null;
+        let conteo = 0;
+        for (let key in inputsRaw) {
+            if (inputsRaw[key] === 'x') {
+                incognita = key;
+                conteo++;
+            }
+        }
+
+        if (conteo > 1) {
+            contenedorPasos.innerHTML = '<div class="step" style="border-left-color:red;">❌ Error: Solo puedes colocar una sola variable "x" en todo el sistema.</div>';
+            contenedorResultado.style.display = 'block';
+            return;
+        }
+
+        const v = {};
+        for (let key in inputsRaw) {
+            v[key] = inputsRaw[key] === 'x' ? 'x' : parseFloat(inputsRaw[key]);
+        }
+
+        // Cálculos de energías individuales fijas o representaciones algebraicas
+        let ec0 = (v.m !== 'x' && v.v0 !== 'x') ? 0.5 * v.m * (v.v0 * v.v0) : 'x';
+        let eg0 = (v.m !== 'x' && v.g !== 'x' && v.h0 !== 'x') ? v.m * v.g * v.h0 : 'x';
+        let ee0 = (v.k0 !== 'x' && v.x0 !== 'x') ? 0.5 * v.k0 * (v.x0 * v.x0) : 'x';
+
+        let html = `<div class="step"><strong>Paso 1: Cálculo de Energías en el Estado Inicial (E₀)</strong><br>`;
+        html += `• Cinetica (E_c₀) = ½ · m · v₀² = ${v.v0 === 'x' ? '½ · m · v₀²' : ec0 + ' J'}<br>`;
+        html += `• Potencial Gravitacional (E_g₀) = m · g · h₀ = ${v.h0 === 'x' || v.m === 'x' ? 'm · g · h₀' : eg0 + ' J'}<br>`;
+        html += `• Potencial Elástica (E_e₀) = ½ · k₀ · x₀² = ${v.x0 === 'x' || v.k0 === 'x' ? '½ · k₀ · x₀²' : ee0 + ' J'}</div>`;
+
+        let ecf = (v.m !== 'x' && v.vf !== 'x') ? 0.5 * v.m * (v.vf * v.vf) : 'x';
+        let egf = (v.m !== 'x' && v.g !== 'x' && v.hf !== 'x') ? v.m * v.g * v.hf : 'x';
+        let eef = (v.kf !== 'x' && v.xf !== 'x') ? 0.5 * v.kf * (v.xf * v.xf) : 'x';
+
+        html += `<div class="step"><strong>Paso 2: Cálculo de Energías en el Estado Final (E_f)</strong><br>`;
+        html += `• Cinetica (E_cf) = ½ · m · v_f² = ${v.vf === 'x' ? '½ · m · v_f²' : ecf + ' J'}<br>`;
+        html += `• Potencial Gravitacional (E_gf) = m · g · h_f = ${v.hf === 'x' || v.m === 'x' ? 'm · g · h_f' : egf + ' J'}<br>`;
+        html += `• Potencial Elástica (E_ef) = ½ · k_f · x_f² = ${v.xf === 'x' || v.kf === 'x' ? '½ · k_f · x_f²' : eef + ' J'}</div>`;
+
+        let sumE0 = (typeof ec0 === 'number' ? ec0 : 0) + (typeof eg0 === 'number' ? eg0 : 0) + (typeof ee0 === 'number' ? ee0 : 0);
+        let sumEf = (typeof ecf === 'number' ? ecf : 0) + (typeof egf === 'number' ? egf : 0) + (typeof eef === 'number' ? eef : 0);
+
+        html += `<div class="step"><strong>Paso 3: Principio de Conservación de la Energía (E₀ = E_f)</strong><br>
+        Planteamiento general de igualdad del sistema cerrado:<br>
+        <span class="math-expr">E_c₀ + E_g₀ + E_e₀ = E_cf + E_gf + E_ef</span>`;
+
+        if (incognita === null) {
+            html += `<span class="math-expr">${sumE0} J = ${sumEf} J</span></div>`;
+            if (Math.abs(sumE0 - sumEf) < 0.01) {
+                html += `<div class="final-answer">¡La Energía se conserva perfectamente!<br>Energía Total = ${sumE0.toFixed(2)} Joules</div>`;
+            } else {
+                html += `<div class="final-answer" style="border-left-color: orange; background-color:#fffaf0; color:#dd6b20;">Los sistemas no coinciden (ΔE = ${(sumE0 - sumEf).toFixed(2)} J). Revisa pérdidas por fricción o trabajo externo.</div>`;
+            }
+        } else {
+            html += `<br>Reemplazando por los coeficientes aritméticos recolectados:<span class="math-expr">`;
+            let rX = 0;
+
+            if (incognita === 'vf') {
+                let constantesFinales = egf + eef;
+                html += `${sumE0} = ½ · (${v.m}) · v_f² + ${constantesFinales}</span></div>`;
+                let numDespejado = sumE0 - constantesFinales;
+                html += `<div class="step"><strong>Paso 4: Aislamiento y extracción de raíz cuadrada</strong><br>Pasamos restando y dividiendo la constante de la masa:<br>
+                <span class="math-expr">v_f² = ${numDespejado} / (0.5 · ${v.m}) = ${numDespejado / (0.5 * v.m)}</span></div>`;
+                rX = Math.sqrt(numDespejado / (0.5 * v.m));
+                html += `<div class="final-answer">Solución del problema de Física:<br>Velocidad Final (v_f) = ${rX.toFixed(4).replace(/\.?0+$/, '')} m/s</div>`;
+            } 
+            else if (incognita === 'v0') {
+                let constantesIniciales = eg0 + ee0;
+                html += `½ · (${v.m}) · v₀² + ${constantesIniciales} = ${sumEf}</span></div>`;
+                let numDespejado = sumEf - constantesIniciales;
+                rX = Math.sqrt(numDespejado / (0.5 * v.m));
+                html += `<div class="final-answer">Solución del problema de Física:<br>Velocidad Inicial (v₀) = ${rX.toFixed(4).replace(/\.?0+$/, '')} m/s</div>`;
+            }
+            else if (incognita === 'hf') {
+                let constantesFinales = ecf + eef;
+                html += `${sumE0} = ${constantesFinales} + (${v.m} · ${v.g}) · h_f</span></div>`;
+                rX = (sumE0 - constantesFinales) / (v.m * v.g);
+                html += `<div class="final-answer">Solución del problema de Física:<br>Altura Final (h_f) = ${rX.toFixed(4).replace(/\.?0+$/, '')} metros</div>`;
+            }
+            else if (incognita === 'h0') {
+                let constantesIniciales = ec0 + ee0;
+                html += `(${v.m} · ${v.g}) · h₀ + ${constantesIniciales} = ${sumEf}</span></div>`;
+                rX = (sumEf - constantesIniciales) / (v.m * v.g);
+                html += `<div class="final-answer">Solución del problema de Física:<br>Altura Inicial (h₀) = ${rX.toFixed(4).replace(/\.?0+$/, '')} metros</div>`;
+            }
+            else if (incognita === 'xf') {
+                let constantesFinales = ecf + egf;
+                html += `${sumE0} = ${constantesFinales} + ½ · ${v.kf} · x_f²</span></div>`;
+                let numDespejado = (sumE0 - constantesFinales) / (0.5 * v.kf);
+                rX = Math.sqrt(numDespejado);
+                html += `<div class="final-answer">Solución del problema de Física:<br>Elongación/Compresión del muelle (x_f) = ${rX.toFixed(4).replace(/\.?0+$/, '')} metros</div>`;
+            }
+            else if (incognita === 'x0') {
+                let constantesIniciales = ec0 + eg0;
+                html += `½ · ${v.k0} · x₀² + ${constantesIniciales} = ${sumEf}</span></div>`;
+                let numDespejado = (sumEf - constantesIniciales) / (0.5 * v.k0);
+                rX = Math.sqrt(numDespejado);
+                html += `<div class="final-answer">Solución del problema de Física:<br>Compresión Inicial del muelle (x₀) = ${rX.toFixed(4).replace(/\.?0+$/, '')} metros</div>`;
+            }
+            else if (incognita === 'm') {
+                let coefM_izq = (v.g * v.h0) + (0.5 * v.v0 * v.v0);
+                let coefM_der = (0.5 * v.vf * v.vf) + (v.g * v.hf);
+                html += `m · (${coefM_izq}) + ${ee0} = m · (${coefM_der}) + ${eef}</span></div>`;
+                rX = (eef - ee0) / (coefM_izq - coefM_der);
+                html += `<div class="final-answer">Solución del problema de Física:<br>Masa de la partícula (m) = ${rX.toFixed(4).replace(/\.?0+$/, '')} kg</div>`;
+            }
+            else {
+                html += `Despeje algebraico compatible en proceso.</span></div>`;
+            }
+        }
+        contenedorPasos.innerHTML = html;
+        contenedorResultado.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
